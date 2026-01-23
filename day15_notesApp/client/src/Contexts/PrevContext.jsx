@@ -19,8 +19,21 @@ function PrevNoteContextProvider({children}){
     
         fetchNotes();
     },[])
-    function getbyId(id){
-        return prevNote.find(note=>note._id==id)
+    async function getbyId(id){
+        // Check if note exists in state
+    let note = prevNote.find((note) => note._id === id);
+    if (note) return note;
+
+    // If not, fetch from backend
+    try {
+      const res = await fetch(`http://localhost:3000/notes/${id}`);
+      if (!res.ok) throw new Error("Note not found");
+      note = await res.json();
+      return note;
+    } catch (error) {
+      console.error("Error fetching note by id:", error);
+      return null;
+    }
     }
     const addNotes = async({ heading, content })=>{
         
