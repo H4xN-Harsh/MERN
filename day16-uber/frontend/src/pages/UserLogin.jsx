@@ -1,8 +1,23 @@
+import { useState } from "react"
 import { Link } from "react-router-dom"
 export default function UserLogin(){
+    const [email,setEmail] = useState('');
+    const [password,setPassword] = useState('');
+    const [userData,setUserData] = useState({});
+    const submitHandler = (e)=>{
+        e.preventDefault();
+        setUserData({
+            email:email,
+            password:password
+        })
+        
+        setEmail('');
+        setPassword('');
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#c2d3c2] px-4">
-            <form className="w-full max-w-sm bg-white rounded-2xl p-8 space-y-6 shadow-sm">
+            <form onSubmit={(e)=>{submitHandler(e)}} className="w-full max-w-sm bg-white rounded-2xl p-8 space-y-6 shadow-sm">
     
     
                 <h1 className="text-2xl font-medium text-neutral-900 text-center">
@@ -15,6 +30,8 @@ export default function UserLogin(){
                 <input
                     type="email"
                     required
+                    value={email}
+                    onChange={(e)=>{setEmail(e.target.value)}}
                     placeholder="harshu@email.com"
                     className="
                       w-full px-4 py-3 rounded-lg
@@ -32,6 +49,8 @@ export default function UserLogin(){
                 <input
                     type="password"
                     required
+                    value={password}
+                    onChange={(e)=>{setPassword(e.target.value)}}
                     placeholder="••••••••"
                     className="
                       w-full px-4 py-3 rounded-lg
@@ -66,20 +85,20 @@ export default function UserLogin(){
 
                 <div className="text-center space-y-2">
                 <p className="text-sm text-neutral-600">
-                    Sign up as a captain
+                    Sign in as a captain
                 </p>
-                <Link to="/captain-signup"
+                <Link to="/captain-login"
                     className="
                       flex justify-center
                       items-center
                       w-full py-3 rounded-lg
-                      border border-neutral-900
+                      border border-neutral-300
                       text-neutral-900 font-medium
                       transition
                       hover:bg-neutral-900 hover:text-white
                     "
                 >
-                    Signup
+                    Login as captain
                 </Link>
                 </div>
 
