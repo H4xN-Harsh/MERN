@@ -1,6 +1,6 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
-
+import { useContext, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { CaptainDataContext } from "../context/CaptainContex"
 export default function CaptainSignup() {
   const [firstname, setFirstname] = useState('')
   const [lastname, setLastname] = useState('')
@@ -9,25 +9,44 @@ export default function CaptainSignup() {
   const [vehicleType, setVehicleType] = useState('')
   const [vehicleCapacity, setVehicleCapacity] = useState('')
   const [vehicleNumber, setVehicleNumber] = useState('')
-  const [captainData, setCaptainData] = useState({})
-
-  const submitHandler = (e) => {
+  // const [captainData, setCaptainData] = useState({})
+  const navigate = useNavigate();
+  const {captain,setCaptain} = useContext(CaptainDataContext)
+  const submitHandler = async(e) => {
     e.preventDefault()
-
-    setCaptainData({
+    const captainData = {
       fullname: {
-        firstname,
-        lastname,
+        firstname:firstname,
+        lastname:lastname,
       },
       email,
       password,
       vehicle: {
-        type: vehicleType,
+        vehicleType: vehicleType,
         capacity: vehicleCapacity,
-        number: vehicleNumber,
+        plate: vehicleNumber,
+        color:'white'
       },
-    })
-    console.log(captainData);
+    }
+    try{
+      const res = await fetch('http://localhost:4000/captains/register',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+      },
+      body:JSON.stringify(captainData),
+      });
+      if(!res.ok){
+        throw new Error ('Request Failed');
+      }
+      const data = await res.json();
+      // console.log(data);
+      localStorage.setItem('token',data.token);
+      navigate('/captain-home');
+    }catch(error){
+        console.error(error.message);
+    }
+    
 
     setFirstname('')
     setLastname('')

@@ -40,7 +40,7 @@ export default function UserSignup(){
           }
 
           const data = await res.json();
-          console.log(data);
+          // console.log(data);
           setUser(data.user)
           localStorage.setItem('token',data.token)
           navigate('/home')

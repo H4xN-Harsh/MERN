@@ -1,16 +1,36 @@
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useContext, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { CaptainDataContext } from "../context/CaptainContex";
 export default function CaptainLogin(){
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [captainData,setCaptainData] = useState({});
-    const submitHandler = (e)=>{
+    const navigate = useNavigate();
+    const {captain, setCaptain}=useContext(CaptainDataContext)
+    const submitHandler = async(e)=>{
         e.preventDefault();
-        setCaptainData({
+        const captainData = {
             email:email,
             password:password
-        })
-        
+        }
+        try{
+            const res = await fetch('http://localhost:4000/captains/login',{
+                method:"POST",
+                headers:{
+                    "Content-Type": "application/json",
+                },
+                body:JSON.stringify(captainData),
+            })
+            if(!res.ok){
+                throw new Error('request failed')
+            }
+            const data = await res.json();
+            setCaptain(data.captain);
+            localStorage.setItem('token',data.token);
+            navigate('/captain-home')
+        }catch(error){
+            console.error(error.massege);
+        }
         setEmail('');
         setPassword('');
     }
@@ -40,7 +60,7 @@ export default function CaptainLogin(){
                 </div>
                 <div className="space-y-1">
                     <label className="text-sm text-neutral-600">Password</label>
-                    <input type="email"
+                    <input type="password"
                     placeholder="password"
                     required
                     value={password}
